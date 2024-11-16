@@ -1,10 +1,10 @@
-"use strict";
+"use strict"
 
 const redis = require('./redisDB');
 const headers = require('./headersCORS');
 
-function toJson(item) {
-  return JSON.parse(item);
+function toJson(item, index, arr) {
+  arr[index] = JSON.parse(item);
 }
 
 exports.handler = async (event, context) => {
@@ -18,31 +18,18 @@ exports.handler = async (event, context) => {
     redis.on("connect", function() {
       console.log("You are now connected");
     });
+   
+   let keys = [];
+   let n = await redis.get('book_N');
+	  
+   for(let i = 1; i<=n; i++)
+     keys.push('book_'+i);
 
-    // Inicializa un arreglo para las claves
-    let keys = [];
-    // Obtén el número de libros almacenados
-    let n = await redis.get('book_N');
-    
-    // Si 'book_N' no está definido o es 0, responde sin libros
-    if (!n || isNaN(n)) {
-      return { statusCode: 200, headers, body: JSON.stringify([]) }; // Sin libros
-    }
-
-    // Genera las claves para cada libro
-    for (let i = 1; i <= n; i++) {
-      keys.push('book_' + i);
-    }
-
-    // Obtén los valores de las claves
-    const books = await redis.mget(keys);
-
-    // Convierte los libros a objetos JSON
-    const parsedBooks = books.map(toJson);
-    
-    // Retorna los libros como respuesta
-    return { statusCode: 200, headers, body: JSON.stringify(parsedBooks) };
-
+   const books = await redis.mget(keys);
+	  
+   books.forEach(toJson);
+		
+    return { statusCode: 200, headers, body: JSON.stringify(books)};
   } catch (error) {
     console.log(error);
     return { statusCode: 400, headers, body: JSON.stringify(error) };

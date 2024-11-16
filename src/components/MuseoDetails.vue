@@ -65,7 +65,7 @@ export default {
     else {
       this.museo = {
         'id': 'museo_'+Math.floor(Math.random()*100000000),'name':'','location':'',
-        'established':0,'description':'','notableExhibits':};
+        'established':0,'description':'','notableExhibits':''};
     }
   },
   methods: {

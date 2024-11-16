@@ -8,6 +8,7 @@
          <th>Nombre</th>
         <th>Ubicacion</th>
         <th>Creado</th>
+        <th>Notable</th>
         <th class="text-center">Actions</th>
       </tr>
        </thead><tbody>
@@ -15,6 +16,7 @@
        <td>{{museo.name}}</td>
        <td>{{museo.location}}</td>
        <td>{{museo.established}}</td>
+       <td>{{museo.notableExhibits}}</td>
        <td>
        <router-link class="button"
          :to="'/museo/show/'+museo.id">Show</router-link>
@@ -46,11 +48,13 @@ export default {
   },
   methods: {
     allMuseos() {
+
       fetch(this.url+'/.netlify/functions/museoFindAll',
         { headers: {'Accept': 'application/json'}})
         .then((response) => response.json())
         .then((items) => {
           this.museos = items;
+          console.log("Museos obtenidos:", this.museos);
         })
      },
      deleteMuseo(id) {

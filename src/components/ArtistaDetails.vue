@@ -31,7 +31,7 @@
      <div class="row">
       <div class="six columns">
        <label for="copyrightInput">famousWorks</label>
-       <input class="u-full-width" type="number"
+       <input class="u-full-width" type="text"
           v-model="artista.famousWorks">
       </div>
      </div>
@@ -77,16 +77,32 @@ export default {
        this.artista = items[0];
       })
     },
-    updateArtista: function(id) {
-      fetch(this.url+'/.netlify/functions/artistaUpdate/'+id,
-        { headers: {'Content-Type':'application/json'},
-          method: 'PUT',
-          body: JSON.stringify(this.artista)})
-        .then((data) => {
-          this.$router.push('/artista');
-        }
-      )
-    },
+    updateArtista: function() {
+  const id = this.artista.id;
+
+  if (!id) {
+    console.error("Error: el ID no está definido");
+    return;
+  }
+
+  console.log("ID ANTES DE ENVIAR", id);
+  console.log("Datos del artista antes de enviar:", this.artista);
+
+  fetch(this.url + '/.netlify/functions/artistaUpdate/' + id, {
+    headers: { 'Content-Type': 'application/json' },
+    method: 'PUT',
+    body: JSON.stringify(this.artista),
+  })
+    .then((response) => {
+      console.log("Respuesta del servidor:", response);
+      this.$router.push('/artista');
+    })
+    .catch((error) => {
+      console.error("Error al actualizar el artista:", error);
+    });
+},
+
+
     createArtista: function() {
       fetch(this.url+'/.netlify/functions/artistaInsert',
         { headers: {'Content-Type':'application/json'},

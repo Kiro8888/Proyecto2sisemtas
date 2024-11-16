@@ -6,32 +6,32 @@
      <form>
      <div class="row">
       <div class="six columns">
-       <label for="titleInput">Nombre</label>
+       <label for="nameInput">Nombre</label>
        <input class="u-full-width" type="text"
          v-model="museo.name">
       </div>
       <div class="six columns">
-       <label for="authorInput">Ubicacion</label>
+       <label for="locationInput">Ubicacion</label>
        <input class="u-full-width" type="text"
           v-model="museo.location">
       </div>
      </div>
      <div class="row">
       <div class="six columns">
-       <label for="publisherInput">Creado</label>
+       <label for="establishedInput">Creado</label>
        <input class="u-full-width" type="text"
           v-model="museo.established">
       </div>
       <div class="six columns">
-       <label for="editionInput">Descripcion</label>
+       <label for="descriptionInput">Descripcion</label>
        <input class="u-full-width" type="text"
          v-model="museo.description">
       </div>
      </div>
      <div class="row">
       <div class="six columns">
-       <label for="copyrightInput">Notables</label>
-       <input class="u-full-width" type="number"
+       <label for="notableExhibitsInput">Notables</label>
+       <input class="u-full-width" type="text"
           v-model="museo.notableExhibits">
       </div>
      </div>
@@ -49,6 +49,8 @@
 </template>
 <script>
 import { useRoute } from 'vue-router'
+
+
 export default {
   name: "Museo Details",
   props: ['show','edit','create'],
@@ -64,39 +66,64 @@ export default {
       this.findMuseo(route.params.id);
     else {
       this.museo = {
-        'id': 'museo_'+Math.floor(Math.random()*100000000),'name':'','location':'',
+        'id':Math.floor(Math.random()*100000000),'name':'','location':'',
         'established':0,'description':'','notableExhibits':''};
     }
   },
   methods: {
     findMuseo: function(id) {
+      console.log("ID DE ENCONTRAR MUSEO", id);
       fetch(this.url+'/.netlify/functions/museoFind/'+id,
+      console.log("ID", id),
       { headers: {'Accept': 'application/json'}})
       .then((response) => response.json())
       .then((items) => {
        this.museo = items[0];
       })
     },
-    updateMuseo: function(id) {
-      fetch(this.url+'/.netlify/functions/museoUpdate/'+id,
-        { headers: {'Content-Type':'application/json'},
-          method: 'PUT',
-          body: JSON.stringify(this.museo)})
-        .then((data) => {
-          this.$router.push('/museo');
-        }
-      )
-    },
-    createMuseo: function() {
-      fetch(this.url+'/.netlify/functions/museoInsert',
-        { headers: {'Content-Type':'application/json'},
-          method: 'POST',
-          body: JSON.stringify(this.museo)})
-        .then((data) => {
-           this.$router.push('/museo');
-        }
-      )
-    }
+    updateMuseo: function() {
+  const id = this.museo.id;
+
+  if (!id) {
+    console.error("Error: el ID no está definido");
+    return;
+  }
+
+  console.log("ID ANTES DE ENVIAR", id);
+  console.log("Datos del museo antes de enviar:", this.museo);
+
+  fetch(this.url + '/.netlify/functions/museoUpdate/' + id, {
+    headers: { 'Content-Type': 'application/json' },
+    method: 'PUT',
+    body: JSON.stringify(this.museo),
+  })
+    .then((response) => {
+      console.log("Respuesta del servidor:", response);
+      this.$router.push('/museo');
+    })
+    .catch((error) => {
+      console.error("Error al actualizar el museo:", error);
+    });
+},
+
+
+createMuseo: function() {
+  console.log("Datos del museo antes de crear:", this.museo); // Imprime el contenido de museo.
+  
+  fetch(this.url + '/.netlify/functions/museoInsert', {
+    headers: { 'Content-Type': 'application/json' },
+    method: 'POST',
+    body: JSON.stringify(this.museo),
+  })
+    .then((response) => {
+      console.log("Respuesta del servidor:", response); // Imprime la respuesta del servidor.
+      this.$router.push('/museo');
+      console.log("DATOS DEL MUSEO ENVIADOS:", this.museo);
+    })
+    .catch((error) => {
+      console.error("Error al crear el museo:", error); // Manejo de errores.
+    });
+}
   }
 };
 </script>

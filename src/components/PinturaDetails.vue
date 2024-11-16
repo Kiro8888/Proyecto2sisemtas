@@ -77,16 +77,31 @@ export default {
        this.pintura = items[0];
       })
     },
-    updatePintura: function(id) {
-      fetch(this.url+'/.netlify/functions/pinturaUpdate/'+id,
-        { headers: {'Content-Type':'application/json'},
-          method: 'PUT',
-          body: JSON.stringify(this.pintura)})
-        .then((data) => {
-          this.$router.push('/pintura');
-        }
-      )
-    },
+    updatePintura: function() {
+  const id = this.pintura.id;
+
+  if (!id) {
+    console.error("Error: el ID no está definido");
+    return;
+  }
+
+  console.log("ID ANTES DE ENVIAR", id);
+  console.log("Datos del pintura antes de enviar:", this.pintura);
+
+  fetch(this.url + '/.netlify/functions/pinturaUpdate/' + id, {
+    headers: { 'Content-Type': 'application/json' },
+    method: 'PUT',
+    body: JSON.stringify(this.pintura),
+  })
+    .then((response) => {
+      console.log("Respuesta del servidor:", response);
+      this.$router.push('/pintura');
+    })
+    .catch((error) => {
+      console.error("Error al actualizar el pintura:", error);
+    });
+},
+
     createPintura: function() {
       fetch(this.url+'/.netlify/functions/pinturaInsert',
         { headers: {'Content-Type':'application/json'},

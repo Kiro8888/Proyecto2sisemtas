@@ -4,11 +4,11 @@
     <router-link class="three columns button button-primary" 
       to="/">Home</router-link>
     <router-link class="three columns button button-primary" 
-      to="/book">Books</router-link>
+      to="/pintura">Pinturas</router-link>
     <router-link class="three columns button button-primary" 
-      to="/author">Authors</router-link>
+      to="/artista">Artista</router-link>
     <router-link class="three columns button button-primary" 
-      to="/publisher">Publishers</router-link>
+      to="/museo">Museos</router-link>
   </div>
  <router-view />
   <div class="row">
